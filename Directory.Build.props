@@ -17,5 +17,6 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <PackageOutputPath>..\..\nupkgs</PackageOutputPath>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
   </PropertyGroup>
 </Project>
