@@ -2,17 +2,11 @@
 
 namespace Downloader;
 
-public class ChunkHub
+public class ChunkHub(DownloadConfiguration config)
 {
-    private readonly DownloadConfiguration _config;
     private int _chunkCount = 0;
     private long _chunkSize = 0;
     private long _startOffset = 0;
-
-    public ChunkHub(DownloadConfiguration config)
-    {
-        _config = config;
-    }
 
     public void SetFileChunks(DownloadPackage package)
     {
@@ -36,8 +30,8 @@ public class ChunkHub
 
     private void Validate(DownloadPackage package)
     {
-        _chunkCount = _config.ChunkCount;
-        _startOffset = _config.RangeLow;
+        _chunkCount = config.ChunkCount;
+        _startOffset = config.RangeLow;
 
         if (_startOffset < 0)
         {
@@ -61,8 +55,8 @@ public class ChunkHub
     {
         var chunk = new Chunk(start, end) {
             Id = id,
-            MaxTryAgainOnFailover = _config.MaxTryAgainOnFailover,
-            Timeout = _config.Timeout
+            MaxTryAgainOnFailover = config.MaxTryAgainOnFailover,
+            Timeout = config.Timeout
         };
 
         return chunk;

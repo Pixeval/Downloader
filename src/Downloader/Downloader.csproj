@@ -1,79 +1,23 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp3.1;net462;net6.0;</TargetFrameworks>
-    <LangVersion>latestMajor</LangVersion>
-    <Version>3.1.0</Version>
-    <Title>Downloader</Title>
-    <Authors>Behzad Khosravifar</Authors>
-    <Company>bezzad</Company>
-    <Description>Fast and reliable multipart downloader with asynchronous progress events for .NET</Description>
-    <PackageProjectUrl>https://github.com/bezzad/Downloader</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/bezzad/Downloader</RepositoryUrl>
-    <PackageTags>download-manager, downloader, download, idm, internet, streaming, download-file, stream-downloader, multipart-download</PackageTags>
-    <PackageReleaseNotes>
-      Download the same file from multiple sources #118
-      Control the amount of system memroy (RAM) that the Downloader consumes during downloading.
-      Refactor all codes and test.
-      User xUnit instead of msunit tests.
-      Improve memory performance.
-      Fixed some bugs.
-    </PackageReleaseNotes>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>Downloader.snk</AssemblyOriginatorKeyFile>
-    <Copyright>Copyright (C) 2019-2023 Behzad Khosravifar</Copyright>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <LangVersion>preview</LangVersion>
+    <IsPackable>true</IsPackable>
+    <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageLicenseExpression></PackageLicenseExpression>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageIcon>downloader.png</PackageIcon>
-    <RepositoryType>git</RepositoryType>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <DebugType>embedded</DebugType>
-
-	<!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
-	<PublishRepositoryUrl>true</PublishRepositoryUrl>
-
-	<!-- Optional: Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
-	<IncludeSymbols>true</IncludeSymbols>
+    <PackageId>Pixeval.Downloader</PackageId>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile></DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>full</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|AnyCPU'">
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="downloader.png" />
-    <None Include="..\..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="downloader.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+    <PackageReference Include="MinVer" Version="5.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.IO.Pipelines" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="downloader.png" />
+    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
   </ItemGroup>
 </Project>

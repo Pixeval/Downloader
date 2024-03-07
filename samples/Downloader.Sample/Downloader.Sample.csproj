@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <LangVersion>preview</LangVersion>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\tests\Downloader.Tests\Helper\FileLogger.cs" Link="FileLogger.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="ShellProgressBar" Version="5.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Downloader\Downloader.csproj" />
+    <ProjectReference Include="..\Downloader.DummyHttpServer\Downloader.DummyHttpServer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="download.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+
+</Project>

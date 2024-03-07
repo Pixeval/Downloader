@@ -1,9 +1,0 @@
-codecov:
-  notify:
-    after_n_builds: 3
-    wait_for_ci: yes
-
-ignore:
-  - "src/Samples/**/*"
-  - "src/Downloader.DummyHttpServer/**/*"
-  - "src/Downloader.Test/Properties/Resources.Designer.cs"

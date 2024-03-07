@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  push:
+    tags: [ "v*" ]
+
+jobs:
+  build-main-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install .NET Sdk
+        uses: actions/setup-dotnet@v3
+        with:
+          global-json-file: global.json
+
+      - name: Do build
+        run: |
+          dotnet build
+
+      - name: Push packages to nuget
+        run: |
+          Get-ChildItem ./nupkgs -Filter *.nupkg | %{ dotnet nuget push $_.FullName -k ${{secrets.NUGET_API_KEY}} }
+        shell: pwsh
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Artifacts
+          path: "nupkgs"

@@ -16,7 +16,7 @@ internal class ChunkDownloader
     private readonly DownloadConfiguration _configuration;
     private readonly int _timeoutIncrement = 10;
     private ThrottledStream _sourceStream;
-    private ConcurrentStream _storage;
+    private readonly ConcurrentStream _storage;
     internal Chunk Chunk { get; set; }
 
     public event EventHandler<DownloadProgressChangedEventArgs> DownloadProgressChanged;

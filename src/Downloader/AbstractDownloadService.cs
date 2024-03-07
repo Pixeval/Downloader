@@ -14,20 +14,20 @@ namespace Downloader;
 
 public abstract class AbstractDownloadService : IDownloadService, IDisposable
 {
-    protected ILogger _logger;
-    protected SemaphoreSlim _parallelSemaphore;
-    protected readonly SemaphoreSlim _singleInstanceSemaphore = new SemaphoreSlim(1, 1);
-    protected CancellationTokenSource _globalCancellationTokenSource;
-    protected TaskCompletionSource<AsyncCompletedEventArgs> _taskCompletion;
-    protected readonly PauseTokenSource _pauseTokenSource;
-    protected ChunkHub _chunkHub;
-    protected List<Request> _requestInstances;
-    protected readonly Bandwidth _bandwidth;
+    protected ILogger Logger;
+    protected SemaphoreSlim ParallelSemaphore;
+    protected readonly SemaphoreSlim SingleInstanceSemaphore = new(1, 1);
+    protected CancellationTokenSource GlobalCancellationTokenSource;
+    protected TaskCompletionSource<AsyncCompletedEventArgs> TaskCompletion;
+    protected readonly PauseTokenSource PauseTokenSource;
+    protected ChunkHub ChunkHub;
+    protected List<Request> RequestInstances;
+    protected readonly Bandwidth Bandwidth;
     protected DownloadConfiguration Options { get; set; }
 
     public bool IsBusy => Status == DownloadStatus.Running;
-    public bool IsCancelled => _globalCancellationTokenSource?.IsCancellationRequested == true;
-    public bool IsPaused => _pauseTokenSource.IsPaused;
+    public bool IsCancelled => GlobalCancellationTokenSource?.IsCancellationRequested == true;
+    public bool IsPaused => PauseTokenSource.IsPaused;
     public DownloadPackage Package { get; set; }
     public DownloadStatus Status
     {
@@ -41,8 +41,8 @@ public abstract class AbstractDownloadService : IDownloadService, IDisposable
 
     public AbstractDownloadService(DownloadConfiguration options)
     {
-        _pauseTokenSource = new PauseTokenSource();
-        _bandwidth = new Bandwidth();
+        PauseTokenSource = new PauseTokenSource();
+        Bandwidth = new Bandwidth();
         Options = options ?? new DownloadConfiguration();
         Package = new DownloadPackage();
 
@@ -112,14 +112,14 @@ public abstract class AbstractDownloadService : IDownloadService, IDisposable
     public virtual async Task DownloadFileTaskAsync(string[] urls, DirectoryInfo folder, CancellationToken cancellationToken = default)
     {
         await InitialDownloader(cancellationToken, urls);
-        var name = await _requestInstances.First().GetFileName().ConfigureAwait(false);
+        var name = await RequestInstances.First().GetFileName().ConfigureAwait(false);
         var filename = Path.Combine(folder.FullName, name);
         await StartDownload(filename).ConfigureAwait(false);
     }
 
     public virtual void CancelAsync()
     {
-        _globalCancellationTokenSource?.Cancel(true);
+        GlobalCancellationTokenSource?.Cancel(true);
         Resume();
         Status = DownloadStatus.Stopped;
     }
@@ -127,19 +127,19 @@ public abstract class AbstractDownloadService : IDownloadService, IDisposable
     public virtual async Task CancelTaskAsync()
     {
         CancelAsync();
-        if (_taskCompletion != null)
-            await _taskCompletion.Task.ConfigureAwait(false);
+        if (TaskCompletion != null)
+            await TaskCompletion.Task.ConfigureAwait(false);
     }
 
     public virtual void Resume()
     {
         Status = DownloadStatus.Running;
-        _pauseTokenSource.Resume();
+        PauseTokenSource.Resume();
     }
 
     public virtual void Pause()
     {
-        _pauseTokenSource.Pause();
+        PauseTokenSource.Pause();
         Status = DownloadStatus.Paused;
     }
 
@@ -150,26 +150,26 @@ public abstract class AbstractDownloadService : IDownloadService, IDisposable
             if (IsBusy || IsPaused)
                 await CancelTaskAsync().ConfigureAwait(false);
 
-            await _singleInstanceSemaphore?.WaitAsync();
+            await SingleInstanceSemaphore?.WaitAsync();
 
-            _parallelSemaphore?.Dispose();
-            _globalCancellationTokenSource?.Dispose();
-            _bandwidth.Reset();
-            _requestInstances = null;
+            ParallelSemaphore?.Dispose();
+            GlobalCancellationTokenSource?.Dispose();
+            Bandwidth.Reset();
+            RequestInstances = null;
 
-            if (_taskCompletion != null)
+            if (TaskCompletion != null)
             {
-                if (_taskCompletion.Task.IsCompleted == false)
-                    _taskCompletion.TrySetCanceled();
+                if (TaskCompletion.Task.IsCompleted == false)
+                    TaskCompletion.TrySetCanceled();
 
-                _taskCompletion = null;
+                TaskCompletion = null;
             }
             // Note: don't clear package from `DownloadService.Dispose()`.
             // Because maybe it will be used at another time.
         }
         finally
         {
-            _singleInstanceSemaphore?.Release();
+            SingleInstanceSemaphore?.Release();
         }
     }
 
@@ -177,12 +177,12 @@ public abstract class AbstractDownloadService : IDownloadService, IDisposable
     {
         await Clear();
         Status = DownloadStatus.Created;
-        _globalCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        _taskCompletion = new TaskCompletionSource<AsyncCompletedEventArgs>();
-        _requestInstances = addresses.Select(url => new Request(url, Options.RequestConfiguration)).ToList();
-        Package.Urls = _requestInstances.Select(req => req.Address.OriginalString).ToArray();
-        _chunkHub = new ChunkHub(Options);
-        _parallelSemaphore = new SemaphoreSlim(Options.ParallelCount, Options.ParallelCount);
+        GlobalCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        TaskCompletion = new TaskCompletionSource<AsyncCompletedEventArgs>();
+        RequestInstances = addresses.Select(url => new Request(url, Options.RequestConfiguration)).ToList();
+        Package.Urls = RequestInstances.Select(req => req.Address.OriginalString).ToArray();
+        ChunkHub = new ChunkHub(Options);
+        ParallelSemaphore = new SemaphoreSlim(Options.ParallelCount, Options.ParallelCount);
     }
 
     protected async Task StartDownload(string fileName)
@@ -237,7 +237,7 @@ public abstract class AbstractDownloadService : IDownloadService, IDisposable
             Package.Storage = null;
         }
 
-        _taskCompletion.TrySetResult(e);
+        TaskCompletion.TrySetResult(e);
         DownloadFileCompleted?.Invoke(this, e);
     }
 
@@ -246,15 +246,15 @@ public abstract class AbstractDownloadService : IDownloadService, IDisposable
         if (e.ReceivedBytesSize > Package.TotalFileSize)
             Package.TotalFileSize = e.ReceivedBytesSize;
 
-        _bandwidth.CalculateSpeed(e.ProgressedByteSize);
+        Bandwidth.CalculateSpeed(e.ProgressedByteSize);
         var totalProgressArg = new DownloadProgressChangedEventArgs(nameof(DownloadService)) {
             TotalBytesToReceive = Package.TotalFileSize,
             ReceivedBytesSize = Package.ReceivedBytesSize,
-            BytesPerSecondSpeed = _bandwidth.Speed,
-            AverageBytesPerSecondSpeed = _bandwidth.AverageSpeed,
+            BytesPerSecondSpeed = Bandwidth.Speed,
+            AverageBytesPerSecondSpeed = Bandwidth.AverageSpeed,
             ProgressedByteSize = e.ProgressedByteSize,
             ReceivedBytes = e.ReceivedBytes,
-            ActiveChunks = Options.ParallelCount - _parallelSemaphore.CurrentCount,
+            ActiveChunks = Options.ParallelCount - ParallelSemaphore.CurrentCount,
         };
         Package.SaveProgress = totalProgressArg.ProgressPercentage;
         e.ActiveChunks = totalProgressArg.ActiveChunks;
@@ -264,7 +264,7 @@ public abstract class AbstractDownloadService : IDownloadService, IDisposable
 
     public void AddLogger(ILogger logger)
     {
-        _logger = logger;
+        Logger = logger;
     }
 
     public virtual void Dispose()

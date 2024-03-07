@@ -8,7 +8,7 @@ namespace Downloader;
 
 public class TaskStateManagement
 {
-    private readonly ConcurrentQueue<Exception> _exceptions = new ConcurrentQueue<Exception>();
+    private readonly ConcurrentQueue<Exception> _exceptions = new();
     protected readonly ILogger Logger;
 
     /// <summary>

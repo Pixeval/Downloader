@@ -10,22 +10,6 @@ namespace Downloader;
 
 public class RequestConfiguration
 {
-    public RequestConfiguration()
-    {
-        Headers = new WebHeaderCollection();
-        AllowAutoRedirect = true;
-        AuthenticationLevel = AuthenticationLevel.MutualAuthRequested;
-        AutomaticDecompression = DecompressionMethods.None;
-        ClientCertificates = new X509CertificateCollection();
-        ImpersonationLevel = TokenImpersonationLevel.Delegation;
-        KeepAlive = false; // Please keep this in false. Because of an error (An existing connection was forcibly closed by the remote host)
-        MaximumAutomaticRedirections = 50;
-        Pipelined = true;
-        ProtocolVersion = HttpVersion.Version11;
-        Timeout = 30 * 1000; // 30 second
-        UserAgent = $"{nameof(Downloader)}/{Assembly.GetExecutingAssembly().GetName().Version.ToString(3)}";
-    }
-
     /// <summary>
     ///     A <see cref="string" /> containing the value of the HTTP Accept header. The default value of this property is null.
     ///     Note: For additional information see section 14.1 of IETF RFC 2616 - HTTP/1.1.
@@ -39,19 +23,19 @@ public class RequestConfiguration
     ///     The maximum number of redirections to follow is set by the
     ///     <see cref="System.Net.HttpWebRequest.MaximumAutomaticRedirections" /> property.
     /// </summary>
-    public bool AllowAutoRedirect { get; set; }
+    public bool AllowAutoRedirect { get; set; } = true;
 
     /// <summary>
     ///     Gets or sets values indicating the level of authentication and impersonation used for this request.
     /// </summary>
-    public AuthenticationLevel AuthenticationLevel { get; set; }
+    public AuthenticationLevel AuthenticationLevel { get; set; } = AuthenticationLevel.MutualAuthRequested;
 
     /// <summary>
     ///     A <see cref="DecompressionMethods" /> object that indicates the type of decompression that is used.
     ///     Default value is None;
     /// </summary>
     /// <exception cref="InvalidOperationException">The object's current state does not allow this property to be set.</exception>
-    public DecompressionMethods AutomaticDecompression { get; set; }
+    public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.None;
 
     /// <summary>
     ///     Gets or sets the cache policy for this request.
@@ -76,7 +60,7 @@ public class RequestConfiguration
     ///     <see cref="HttpWebRequest" /> unless you know the server will ask for it.
     /// </remarks>
     /// <exception cref="ArgumentNullException">The value specified for a set operation is null.</exception>
-    public X509CertificateCollection ClientCertificates { get; set; }
+    public X509CertificateCollection ClientCertificates { get; set; } = new();
 
     /// <summary>
     ///     The ContentType property contains the media type of the request.
@@ -118,7 +102,7 @@ public class RequestConfiguration
     ///     When overridden in a descendant class, gets or sets the collection of
     ///     header name/value pairs associated with the request.
     /// </summary>
-    public WebHeaderCollection Headers { get; set; }
+    public WebHeaderCollection Headers { get; set; } = new();
 
     /// <summary>
     ///     A <see cref="System.DateTime" /> that contains the contents of the HTTP If-Modified-Since header.
@@ -132,14 +116,14 @@ public class RequestConfiguration
     /// <summary>
     ///     Gets or sets the impersonation level for the current request.
     /// </summary>
-    public TokenImpersonationLevel ImpersonationLevel { get; set; }
+    public TokenImpersonationLevel ImpersonationLevel { get; set; } = TokenImpersonationLevel.Delegation;
 
     /// <summary>
     ///     An application uses <see cref="System.Net.HttpWebRequest.KeepAlive" /> to
     ///     indicate a preference for persistent connections. When this property is true,
     ///     the application makes persistent connections to the servers that support them.
     /// </summary>
-    public bool KeepAlive { get; set; }
+    public bool KeepAlive { get; set; } = false; // Please keep this in false. Because of an error (An existing connection was forcibly closed by the remote host)
 
     /// <summary>
     ///     A <see cref="Int32" /> value that indicates the maximum number of redirection responses that the current instance
@@ -149,7 +133,7 @@ public class RequestConfiguration
     ///         The value specified for a set operation is less than or equal to zero.
     ///     </exception>
     /// </summary>
-    public int MaximumAutomaticRedirections { get; set; }
+    public int MaximumAutomaticRedirections { get; set; } = 50;
 
     /// <summary>
     ///     A <see cref="string" /> that identifies the media type of the current request.
@@ -169,7 +153,7 @@ public class RequestConfiguration
     ///     Pipelined connections are made only when the <seealso cref="System.Net.HttpWebRequest.KeepAlive" /> property is
     ///     true.
     /// </summary>
-    public bool Pipelined { get; set; }
+    public bool Pipelined { get; set; } = true;
 
     /// <summary>
     ///     Gets or sets a Boolean value that indicates whether to send HTTP preauthentication header
@@ -191,7 +175,7 @@ public class RequestConfiguration
     /// <exception cref="ArgumentException">
     ///     The HTTP version is set to a value other than 1.0 or 1.1.
     /// </exception>
-    public Version ProtocolVersion { get; set; }
+    public Version ProtocolVersion { get; set; } = HttpVersion.Version11;
 
     /// <summary>
     ///     The <see cref="System.Net.HttpWebRequest.Proxy" /> property identifies
@@ -227,7 +211,7 @@ public class RequestConfiguration
     /// </exception>
     public bool SendChunked { get; set; }
 
-    public int Timeout { get; set; }
+    public int Timeout { get; set; } = 30 * 1000; // 30 second
 
     /// <summary>
     ///     A String that contains the value of the HTTP Transfer-encoding header. The default value is null.
@@ -262,5 +246,5 @@ public class RequestConfiguration
     ///     A <see cref="string" /> containing the value of the HTTP User-agent header.
     ///     The default value is "<seealso cref="Downloader" />/{<seealso cref="Version" />}".
     /// </summary>
-    public string UserAgent { get; set; }
+    public string UserAgent { get; set; } = $"{nameof(Downloader)}/{Assembly.GetExecutingAssembly().GetName().Version.ToString(3)}";
 }

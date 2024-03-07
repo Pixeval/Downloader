@@ -1,0 +1,21 @@
+<Project>
+  <PropertyGroup>
+    <Authors>Pixeval</Authors>
+    <Company>Pixeval</Company>
+    <Description>Fast and reliable multipart downloader with asynchronous progress events for .NET</Description>
+    <PackageProjectUrl>https://github.com/Pixeval/Downloader</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Pixeval/Downloader</RepositoryUrl>
+    <PackageTags>
+      download-manager, downloader, download, idm, internet, streaming, download-file,
+      stream-downloader, multipart-download
+    </PackageTags>
+    <Copyright>Copyright (C) 2024 Pixeval</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <PackageOutputPath>..\..\nupkgs</PackageOutputPath>
+  </PropertyGroup>
+</Project>
