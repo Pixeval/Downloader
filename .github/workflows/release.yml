@@ -17,7 +17,7 @@ jobs:
 
       - name: Do build
         run: |
-          dotnet build -C Release
+          dotnet build -c Release
 
       - name: Push packages to nuget
         run: |
