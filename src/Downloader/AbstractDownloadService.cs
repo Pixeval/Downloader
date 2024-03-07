@@ -39,7 +39,7 @@ public abstract class AbstractDownloadService : IDownloadService, IDisposable
     public event EventHandler<DownloadProgressChangedEventArgs> ChunkDownloadProgressChanged;
     public event EventHandler<DownloadStartedEventArgs> DownloadStarted;
 
-    public AbstractDownloadService(DownloadConfiguration options)
+    public AbstractDownloadService(DownloadConfiguration? options)
     {
         PauseTokenSource = new PauseTokenSource();
         Bandwidth = new Bandwidth();

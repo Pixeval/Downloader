@@ -8,7 +8,7 @@ public class DownloadBuilder
     private string _url;
     private string _directoryPath;
     private string _filename;
-    private DownloadConfiguration _downloadConfiguration;
+    private DownloadConfiguration? _downloadConfiguration;
 
     public static DownloadBuilder New()
     {
@@ -66,7 +66,7 @@ public class DownloadBuilder
         return this;
     }
 
-    public DownloadBuilder WithConfiguration(DownloadConfiguration configuration)
+    public DownloadBuilder WithConfiguration(DownloadConfiguration? configuration)
     {
         _downloadConfiguration = configuration;
         return this;
@@ -94,7 +94,7 @@ public class DownloadBuilder
         return new Download(package, _url, _downloadConfiguration);
     }
 
-    public IDownload Build(DownloadPackage package, DownloadConfiguration downloadConfiguration)
+    public IDownload Build(DownloadPackage package, DownloadConfiguration? downloadConfiguration)
     {
         return new Download(package, _url, downloadConfiguration);
     }

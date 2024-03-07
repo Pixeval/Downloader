@@ -20,7 +20,7 @@ jobs:
 
       - name: Do build
         run: |
-          dotnet build
+          dotnet build -C Release
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3

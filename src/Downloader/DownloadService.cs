@@ -9,10 +9,9 @@ using System.Threading.Tasks;
 
 namespace Downloader;
 
-public class DownloadService : AbstractDownloadService
+public class DownloadService(DownloadConfiguration? options) : AbstractDownloadService(options)
 {
-    public DownloadService(DownloadConfiguration options) : base(options) { }
-    public DownloadService() : base(null) { }
+    public DownloadService() : this(null) { }
 
     protected override async Task<Stream> StartDownload()
     {

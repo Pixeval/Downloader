@@ -118,7 +118,7 @@ public class ConcurrentStream : TaskStateManagement, IDisposable
         return stream.Read(buffer, offset, count);
     }
 
-    public async Task WriteAsync(long position, byte[] bytes, int length, bool fireAndForget = true)
+    public async Task WriteAsync(long position, byte[]? bytes, int length, bool fireAndForget = true)
     {
         if (bytes.Length < length)
             throw new ArgumentOutOfRangeException(nameof(length));

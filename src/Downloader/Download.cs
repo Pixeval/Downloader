@@ -42,7 +42,7 @@ internal class Download : IDownload
         remove { _downloadService.DownloadStarted -= value; }
     }
 
-    public Download(string url, string path, string filename, DownloadConfiguration configuration)
+    public Download(string url, string path, string filename, DownloadConfiguration? configuration)
     {
         _downloadService = new DownloadService(configuration);
         Url = url;
@@ -51,13 +51,13 @@ internal class Download : IDownload
         Package = _downloadService.Package;
     }
 
-    public Download(DownloadPackage package, DownloadConfiguration configuration)
+    public Download(DownloadPackage package, DownloadConfiguration? configuration)
     {
         _downloadService = new DownloadService(configuration);
         Package = package;
     }
 
-    public Download(DownloadPackage package, string address, DownloadConfiguration configuration)
+    public Download(DownloadPackage package, string address, DownloadConfiguration? configuration)
     {
         _downloadService = new DownloadService(configuration);
         Package = package;

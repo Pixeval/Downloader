@@ -5,7 +5,7 @@ namespace Downloader;
 
 public class PauseTokenSource
 {
-    private volatile TaskCompletionSource<bool> _tcsPaused;
+    private volatile TaskCompletionSource<bool>? _tcsPaused;
 
     public PauseToken Token => new(this);
     public bool IsPaused => _tcsPaused != null;

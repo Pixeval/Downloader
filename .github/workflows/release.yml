@@ -5,7 +5,7 @@ on:
     tags: [ "v*" ]
 
 jobs:
-  build-main-package:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -17,7 +17,7 @@ jobs:
 
       - name: Do build
         run: |
-          dotnet build
+          dotnet build -C Release
 
       - name: Push packages to nuget
         run: |
